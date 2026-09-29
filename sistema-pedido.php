@@ -18,7 +18,7 @@ $sql = "INSERT INTO pedido (id_pedido, data_pedido, valor_total_pedido, forma_pa
 // prepara o template da consulta SQL
 if($stmt = $conn->prepare($sql)) {
   // Vincula os parâmetros
-  $stmt->bind_param("sss", $id_pedido, $data_pedido, $valor_total_pedido, $forma_pagamento, $Usuario_id_usuario);
+  $stmt->bind_param("isdsi", $id_pedido, $data_pedido, $valor_total_pedido, $forma_pagamento, $Usuario_id_usuario);
 
   // define os valores dos parâmetros e executa a consulta
   $id_pedido = 1;
