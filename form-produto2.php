@@ -42,7 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["fileToUpload"]) && $_
     // se está tudo ok, tenta fazer o upload do arquivo
     } else {
         if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
-            echo "The file " . htmlspecialchars(basename($_FILES["fileToUpload"]["name"])) . " has been uploaded.<br>";
+            echo "O produto " . htmlspecialchars(basename($_FILES["fileToUpload"]["name"])) . " foi enviado com sucesso.<br>";
         } else {
             echo "Sorry, there was an error uploading your file.<br>";
         }
@@ -52,3 +52,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["fileToUpload"]) && $_
     echo "Nenhum arquivo foi selecionado ou ocorreu um erro no envio.";
 }
 ?>
+<html>
+<body>
+<h2>Upload de Produto:</h2>
+<form action="form-usuario2.php" method="post">
+Nome: <?php echo $_POST["name"]; ?><br>
+Preço: <?php echo $_POST["price"]; ?><br>
+Foto: <img src="<?php echo $caminhoImagem; ?>">
+</form>
+
+</body>
+</html>
