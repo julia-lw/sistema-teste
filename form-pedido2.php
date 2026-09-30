@@ -11,14 +11,12 @@ try {
     die("Erro de conexão: " . $e->getMessage());
 }
 
-// Recebe os dados do formulário
 $usuario_id = $_POST['usuario_id'] ?? null;
 $valor_total = $_POST['valor_total'] ?? null;
 $forma_pagamento = $_POST['forma_pagamento'] ?? null;
-$data_pedido = date('Y-m-d H:i:s'); // Gera a data/hora atual no formato do banco
+$data_pedido = date('Y-m-d H:i:s');
 
 if ($usuario_id && $valor_total && $forma_pagamento) {
-    // Insere os dados na tabela 'pedido'
     $sql = "INSERT INTO pedido (data_pedido, valor_total_pedido, forma_pagamento, Usuario_id_usuario) 
             VALUES (:data_pedido, :valor_total, :forma_pagamento, :usuario_id)";
     
@@ -29,7 +27,7 @@ if ($usuario_id && $valor_total && $forma_pagamento) {
     $stmt->bindParam(':usuario_id', $usuario_id);
 
     if ($stmt->execute()) {
-        $id_pedido = $pdo->lastInsertId(); // Pega o ID do pedido gerado
+        $id_pedido = $pdo->lastInsertId();
         $sucesso = true;
     } else {
         $sucesso = false;
