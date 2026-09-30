@@ -16,15 +16,16 @@ $id_produto = $_POST['id_produto'] ?? null;
 $quantidade_contem = $_POST['quantidade_contem'] ?? null;
 
 if ($id_pedido && $id_produto && $quantidade_contem) {
-    $sql = "INSERT INTO contem (Pedido_id_pedido, Produto_id_produto, quantidade_contem) 
-            VALUES (:id_pedido, :id_produto, :quantidade_contem)";
-    
-    $stmt = $pdo->prepare($sql);
-    $stmt->bindParam(':id_pedido', $id_pedido);
-    $stmt->bindParam(':id_produto', $id_produto);
-    $stmt->bindParam(':quantidade_contem', $quantidade_contem);
+    try {
+        $sql = "INSERT INTO contem (Pedido_id_pedido, Produto_id_produto, quantidade_contem) 
+                VALUES (:id_pedido, :id_produto, :quantidade_contem)";
+        
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(':id_pedido', $id_pedido);
+        $stmt->bindParam(':id_produto', $id_produto);
+        $stmt->bindParam(':quantidade_contem', $quantidade_contem);
 
-    if ($stmt->execute()) {
+        $stmt->execute();
         $sucesso = true;
 
         $sqlProduto = "SELECT nome_produto, preco_produto FROM produto WHERE id_produto = :id_produto";
@@ -32,7 +33,13 @@ if ($id_pedido && $id_produto && $quantidade_contem) {
         $stmtProd->bindParam(':id_produto', $id_produto);
         $stmtProd->execute();
         $dadosProduto = $stmtProd->fetch(PDO::FETCH_ASSOC);
-    } else {
+
+    } catch (PDOException $e) {
+        if ($e->getCode() == 23000) {
+            $erro_mensagem = "Este produto já está associado a este pedido! Tente outro ID de produto ou outro pedido.";
+        } else {
+            $erro_mensagem = "Erro no banco de dados: " . $e->getMessage();
+        }
         $sucesso = false;
     }
 } else {
@@ -50,18 +57,17 @@ if ($id_pedido && $id_produto && $quantidade_contem) {
 
     <?php if (isset($sucesso) && $sucesso): ?>
         <h2>Item Adicionado com Sucesso ao Pedido #<?php echo htmlspecialchars($id_pedido); ?>!</h2>
-
         <p><strong>ID do Pedido:</strong> <?php echo htmlspecialchars($id_pedido); ?></p>
         <p><strong>ID do Produto:</strong> <?php echo htmlspecialchars($id_produto); ?></p>
-
         <?php if (!empty($dadosProduto)): ?>
             <p><strong>Nome do Produto:</strong> <?php echo htmlspecialchars($dadosProduto['nome_produto']); ?></p>
         <?php endif; ?>
-
         <p><strong>Quantidade:</strong> <?php echo htmlspecialchars($quantidade_contem); ?></p>
 
     <?php else: ?>
-        <h2>Erro ao relacionar o produto ao pedido.</h2>
+        <h2 style="color: red;">Não foi possível adicionar o item:</h2>
+        <p><?php echo $erro_mensagem; ?></p>
+        <a href="form-contem.php">Voltar ao formulário</a>
     <?php endif; ?>
 
 </body>
